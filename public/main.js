@@ -1,62 +1,77 @@
-// Focus div based on nav button click
-
 // Flip one coin and show coin image to match result when button clicked
 
-// Flip multiple coins and show coin images in table as well as summary results
-// Enter number and press button to activate coin flip series
-
-// Guess a flip by clicking either heads or tails button
-
+// Add event listener in div#single (for coin button)
 const coin = document.getElementById("coin")
 coin.addEventListener("click", flipCoin)
-
+// Function that will await a response
 async function flipCoin() {
+    // Build URL for endpoint
     const endpoint = "app/flip/"
+    // URI so that it is not hardcoded
     const url = document.baseURI+endpoint
+    //  Sends GET request to API endpoint and wats for response
     await fetch(url)
+    //  Responds as json
                     .then(function(response) {
                         return response.json();
                     })
+                    // Replaces existing corresponsing elements in index.html
                         .then(function(result) {
                             console.log(result);
                             document.getElementById("result").innerHTML = result.flip;
                             document.getElementById("quarter").setAttribute("src", "assets/img/"+result.flip+".png");
                         });
 };
-
+// Flip multiple coins and show images and summary results in table
+// Enter number and press button to activate coin flip series
+// The flip many coins form in div#multi
 const coins = document.getElementById("coins")
-
+// event listener for coins
 coins.addEventListener("submit", flipCoins)
-
+// create submit handler that will run when submit button is pressed
 async function flipCoins(event) {
+    // remove default browser event
     event.preventDefault();
+    // endpoint URL
     const endpoint = "app/flip/coins"
     const url = document.baseURI+endpoint
+    // extracts data object from form so it can be run through FormData API
     const formEvent = event.currentTarget
+    // give data to FormData and wait for a response or log an error to console
     try {
         const formData = new FormData(formEvent);
+        // hand the form to function that interacts with API
         const flips = await sendFlips({ url, formData});
         console.log(flips);
+        // summary info
         document.getElementById("heads").innerHTML = "Heads: "+flips.summary.heads;
         document.getElementById("tails").innerHTML = "Tails: "+flips.summary.tails;
+    // calls a fn what will make list of coin images based on array of coin flip results
     } catch (error) {
         console.log(error);
     }
 }
-
+// guess a coin flip by making a selection and pressing the button
 const call = document.getElementById("call")
-
+// add event listener
 call.addEventListener("submit", flipCall)
-
+// create submit hanfler
 async function flipCall(event) {
+    // prevent default reload
     event.preventDefault();
+    // build URL string
     const endpoint = "app/flip/call/"
     const url = document.baseURI+endpoint
+    // extract data from form
     const formEvent = event.currentTarget
+    // give data to FormData and wait for response or log an error to console
     try {
         const formData = new FormData(formEvent);
+        // hand form data off to fn that is actually going to interact with the API
         const results = await sendFlips({url, formData});
+        // process results
         console.log(results);
+        // text results
         document.getElementById("choice").innerHTML = "Guess: "+results.call;
 		document.getElementById("actual").innerHTML = "Actual: "+results.flip;
 		document.getElementById("results").innerHTML = "Result: "+results.result;
@@ -89,10 +104,6 @@ async function sendFlips({ url, formData }) {
     }
     
     // Navigation Buttons
-    // This is EXTREMELY rudimentary, but shows you what is happening very clearly when each button is pressed.
-    // Each time you press one of the nav buttons, it sets its class to "active", and all the others to "".
-    // It also sets the corresponding div to "active" and all the others to "inactive".
-    // These are what is called in "onclick=" for each button.
     function homeNav() {
       document.getElementById("homenav").className = "active";
       document.getElementById("home").className = "active";
@@ -134,8 +145,6 @@ async function sendFlips({ url, formData }) {
       document.getElementById("guesscoin").className = "active";
     } 
     // Make a list of coin images
-    // This function takes an array of coin flip results and turns them into list elements with corresponding images.
-    // This allows the DOM call above to put the list in the appropriate place and show a coin for each of the flips sent back from the server.
     function coinList(array) {
       let text = "";
       let arrayLength = array.length
