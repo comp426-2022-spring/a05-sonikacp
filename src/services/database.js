@@ -12,7 +12,7 @@ if (!fs.existsSync(datadir)) {
 // create database in log.db
 const logdb = new database(datadir+'log.db')
 
-const stmt = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' and name='accesslog';`);
+const stmt = logdb.prepare(`SELECT name FROM sqlite_master WHERE type='table' and name='accesslog';`);
 let row = stmt.get();
 
 // check if table exists
